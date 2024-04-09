@@ -1,0 +1,46 @@
+<div class="wrapper">
+  <div class="panel">
+    <div class="filters">
+      <div class="filter" (click)="sortBy('Название')">Название</div>
+      <div class="filter" (click)="sortBy('Исполнитель')">Исполнитель</div>
+      <div class="filter" (click)="sortBy('Срок')">Срок</div>
+      <div class="filter" (click)="sortBy('Приоритет')">Приоритет</div>
+      <div class="filter" (click)="sortBy('Статус')">Статус</div>
+    </div>
+    <div class="projects">
+      <div class="project" *ngFor="let project of projects">
+        <div class="project-title">{{ project }}</div>
+        <a
+          class="project-tasks"
+          [routerLink]="task.id"
+          *ngFor="let task of getTasksByProject(project)"
+        >
+          <div class="project-task">
+            <div class="info title">{{ task.title }}</div>
+            <div class="info executor">{{ task.executor }}</div>
+            <div class="info deadline">
+              <span>{{ task.deadline.start | dateFormat }}</span>
+              <span>-</span>
+              <span>{{ task.deadline.end | dateFormat }}</span>
+            </div>
+            <div class="info priority">
+              <button [class]="task.priority.class">
+                <span>{{ task.priority.text | titlecase }}</span>
+              </button>
+            </div>
+            <div class="info status">
+              <button [class]="task.status.class">
+                <span>{{ task.status.text | titlecase }}</span>
+              </button>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="add-btn">
+      <a href="/task/add">
+        <button class="btn-add-task">+</button>
+      </a>
+    </div>
+  </div>
+</div>

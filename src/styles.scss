@@ -1,1 +1,40 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0;
+  background: linear-gradient(0deg, #110041, #017474);
+}
+
+.priority,
+.status {
+  button {
+    padding: 10px 15px;
+    border: 0;
+    border-radius: 30px;
+    width: 125px;
+
+    cursor: pointer;
+
+    &.low {
+      background: #88ff80;
+    }
+
+    &.medium {
+      background: #ffc977;
+    }
+
+    &.high {
+      background: #ff8787;
+    }
+
+    &.atWork {
+      background: #4fff40;
+    }
+
+    &.suspended {
+      background: #ffef5b;
+    }
+
+    &.notStarted {
+      background: #d7d7d7;
+    }
+  }
+}

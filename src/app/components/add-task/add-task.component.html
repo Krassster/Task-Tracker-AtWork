@@ -1,0 +1,144 @@
+<div class="wrapper">
+  <form class="panel" (submit)="onSubmit($event)">
+    <div class="panel-title">
+      <h1>Добавить новую задачу</h1>
+    </div>
+    <div class="panel-info">
+      <div class="form-group">
+        <label for="task-name">Название</label>
+        <input
+          type="text"
+          id="task-name"
+          name="task-name"
+          placeholder="Введите название задачи"
+          [(ngModel)]="task.title"
+        />
+      </div>
+      <div class="form-group">
+        <label for="task-executor">Исполнитель</label>
+        <input
+          type="text"
+          id="task-executor"
+          name="task-executor"
+          placeholder="Введите имя исполнителя"
+          [(ngModel)]="task.executor"
+        />
+      </div>
+      <div class="form-group">
+        <label for="task-deadline">Сроки</label>
+        <div class="task-deadline__date">
+          <p>Начало</p>
+          <input
+            type="date"
+            id="task-deadline"
+            name="task-deadline"
+            [(ngModel)]="task.deadline.start"
+          />
+          <p>Конец</p>
+          <input
+            type="date"
+            id="task-deadline"
+            name="task-deadline"
+            [(ngModel)]="task.deadline.end"
+          />
+        </div>
+      </div>
+      <div class="form-group">
+        <ng-container *ngIf="!isNewProject">
+          <div class="task-project-name">
+            <label for="task-project">Проект</label>
+            <span (click)="toggleNewProject()">Новый проект?</span>
+          </div>
+          <select
+            id="task-project"
+            name="task-project"
+            [(ngModel)]="task.project"
+          >
+            <option value="" selected disabled hidden>Выберите проект</option>
+            <option *ngFor="let project of projects" [value]="project">
+              {{ project }}
+            </option>
+          </select>
+        </ng-container>
+        <ng-container *ngIf="isNewProject">
+          <div class="task-project-name">
+            <label for="task-project">Название нового проекта</label>
+            <span (click)="toggleNewProject()">Отмена</span>
+          </div>
+          <input
+            type="text"
+            id="task-project"
+            name="task-project"
+            [(ngModel)]="task.project"
+          />
+        </ng-container>
+      </div>
+      <div class="form-group">
+        <label for="task-priority">Приоритет</label>
+        <div class="priority">
+          <button
+            type="button"
+            class="low"
+            [class.active]="activePriority === 'low'"
+            (click)="setPriority('Низкий', 'low')"
+          >
+            Низкий
+          </button>
+          <button
+            type="button"
+            class="medium"
+            [class.active]="activePriority === 'medium'"
+            (click)="setPriority('Средний', 'medium')"
+          >
+            Средний
+          </button>
+          <button
+            type="button"
+            class="high"
+            [class.active]="activePriority === 'high'"
+            (click)="setPriority('Высокий', 'high')"
+          >
+            Высокий
+          </button>
+        </div>
+        <input type="hidden" id="task-priority" name="task-priority" />
+      </div>
+      <div class="form-group">
+        <label for="task-status">Статус</label>
+        <div class="status">
+          <button
+            type="button"
+            class="atWork"
+            [class.active]="activeStatus === 'atWork'"
+            (click)="setStatus('В работе', 'atWork')"
+          >
+            В работе
+          </button>
+          <button
+            type="button"
+            class="suspended"
+            [class.active]="activeStatus === 'suspended'"
+            (click)="setStatus('Приостановлен', 'suspended')"
+          >
+            Приостановлен
+          </button>
+          <button
+            type="button"
+            class="notStarted"
+            [class.active]="activeStatus === 'notStarted'"
+            (click)="setStatus('Не начат', 'notStarted')"
+          >
+            Не начат
+          </button>
+        </div>
+        <input type="hidden" id="task-priority" name="task-priority" />
+      </div>
+    </div>
+    <div class="panel-btn">
+      <a href="/">
+        <button type="button" class="btn-back">Отмена</button>
+      </a>
+      <button type="submit" class="btn-create">Создать задачу</button>
+    </div>
+  </form>
+</div>

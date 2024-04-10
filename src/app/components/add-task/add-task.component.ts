@@ -1,7 +1,14 @@
+import { StatusDetails, TaskStatus } from './../../enums/task-status.enum';
+import {
+  PriorityDetails,
+  TaskPriority,
+} from './../../enums/task-priority.enum';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Task, TaskManagementService } from 'src/app/service/task.service';
 import { v4 as uuidv4 } from 'uuid';
+import { Store } from '@ngrx/store';
+import { addTask } from 'src/app/store/task.actions';
 
 @Component({
   selector: 'app-add-task',
@@ -21,15 +28,21 @@ export class AddTaskComponent implements OnInit {
     project: '',
   };
 
-  activePriority: string | null = null;
-  activeStatus: string | null = null;
+  activePriority: TaskPriority | null = null;
+  priorityDetails = PriorityDetails;
+  priorities = Object.values(TaskPriority);
+
+  activeStatus: TaskStatus | null = null;
+  statusDetails = StatusDetails;
+  statuses = Object.values(TaskStatus);
 
   projects: string[] = [];
   isNewProject: boolean = false;
 
   constructor(
     private taskService: TaskManagementService,
-    private router: Router
+    private router: Router,
+    private store: Store
   ) {
     this.showValidationErrors = false;
   }
@@ -57,7 +70,7 @@ export class AddTaskComponent implements OnInit {
         project: this.task.project,
       };
 
-      this.taskService.addTask(newTask);
+      this.store.dispatch(addTask({ task: newTask }));
 
       this.router.navigateByUrl('');
     }
@@ -67,15 +80,15 @@ export class AddTaskComponent implements OnInit {
     this.isNewProject = !this.isNewProject;
   }
 
-  setPriority(text: string, style: string) {
-    this.task.priority.text = text;
-    this.task.priority.class = style;
-    this.activePriority = style;
+  setPriority(priority: TaskPriority) {
+    this.activePriority = priority;
   }
 
-  setStatus(text: string, style: string) {
-    this.task.status.text = text;
-    this.task.status.class = style;
-    this.activeStatus = style;
+  setStatus(status: TaskStatus) {
+    this.activeStatus = status;
+  }
+
+  goBack() {
+    this.router.navigateByUrl('');
   }
 }

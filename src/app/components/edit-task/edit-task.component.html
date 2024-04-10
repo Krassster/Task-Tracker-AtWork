@@ -80,27 +80,12 @@
         <div class="priority">
           <button
             type="button"
-            class="low"
-            [class.active]="activePriority === 'low'"
-            (click)="setPriority('Низкий', 'low')"
+            *ngFor="let priority of priorities"
+            [class]="priorityDetails[priority].style"
+            [class.active]="activePriority === priorityDetails[priority].style"
+            (click)="setPriority(priority)"
           >
-            Низкий
-          </button>
-          <button
-            type="button"
-            class="medium"
-            [class.active]="activePriority === 'medium'"
-            (click)="setPriority('Средний', 'medium')"
-          >
-            Средний
-          </button>
-          <button
-            type="button"
-            class="high"
-            [class.active]="activePriority === 'high'"
-            (click)="setPriority('Высокий', 'high')"
-          >
-            Высокий
+            {{ priorityDetails[priority].text }}
           </button>
         </div>
         <input type="hidden" id="task-priority" name="task-priority" />
@@ -110,44 +95,25 @@
         <div class="status">
           <button
             type="button"
-            class="atWork"
-            [class.active]="activeStatus === 'atWork'"
-            (click)="setStatus('В работе', 'atWork')"
+            *ngFor="let status of statuses"
+            [class]="statusDetails[status].style"
+            [class.active]="activeStatus === statusDetails[status].style"
+            (click)="setStatus(status)"
           >
-            В работе
-          </button>
-          <button
-            type="button"
-            class="suspended"
-            [class.active]="activeStatus === 'suspended'"
-            (click)="setStatus('Приостановлен', 'suspended')"
-          >
-            Приостановлен
-          </button>
-          <button
-            type="button"
-            class="notStarted"
-            [class.active]="activeStatus === 'notStarted'"
-            (click)="setStatus('Не начат', 'notStarted')"
-          >
-            Не начат
+            {{ statusDetails[status].text }}
           </button>
         </div>
-        <input type="hidden" id="task-priority" name="task-priority" />
+        <input type="hidden" id="task-status" name="task-status" />
       </div>
     </div>
     <div class="panel-btn">
-      <a href="/">
-        <button type="button" class="btn-bottom back">Отмена</button>
-      </a>
-      <a href="/">
-        <button type="button" (click)="deleteTask()" class="btn-bottom delete">
-          Удалить
-        </button>
-      </a>
-      <button type="submit" class="btn-bottom create">
-        Сохранить изменения
+      <button type="button" class="btn-link back" (click)="goBack()">
+        Отмена
       </button>
+      <button type="button" (click)="this.deleteTask()" class="btn-link delete">
+        Удалить
+      </button>
+      <button type="submit" class="btn-link create">Сохранить изменения</button>
     </div>
   </form>
 </div>

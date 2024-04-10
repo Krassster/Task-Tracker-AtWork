@@ -1,11 +1,11 @@
+@use "src/styles.scss";
+
 .wrapper {
   position: relative;
   width: 100%;
   height: 100vh;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include styles.centring;
 
   .panel {
     width: 1280px;
@@ -17,9 +17,11 @@
     position: relative;
     overflow: auto;
 
+    display: flex;
+    flex-direction: column;
+
     .filters {
-      display: flex;
-      justify-content: center;
+      @include styles.centring;
       gap: 80px;
 
       cursor: pointer;
@@ -30,9 +32,7 @@
         background: #472750;
         color: rgb(255, 255, 255);
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @include styles.centring;
 
         border-radius: 0px 0px 6px 6px;
 
@@ -73,12 +73,9 @@
           transition: box-shadow 0.3s ease;
 
           .info {
-            display: flex;
+            @include styles.centring;
             width: 200px;
             gap: 10px;
-
-            align-items: center;
-            justify-content: center;
           }
         }
 
@@ -90,11 +87,14 @@
 
     .add-btn {
       position: sticky;
-      bottom: 25px;
+      bottom: 15px;
+      padding-right: 15px;
 
       display: flex;
+      align-self: flex-end;
       justify-content: end;
-      padding-right: 5px;
+
+      margin-top: auto;
 
       .btn-add-task {
         margin: auto;
@@ -106,6 +106,8 @@
         font-size: 25px;
         color: #bccad6;
         border: none;
+
+        cursor: pointer;
       }
 
       .btn-add-task:hover {

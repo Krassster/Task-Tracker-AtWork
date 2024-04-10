@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
 
 export interface Task {
@@ -82,8 +82,6 @@ export class TaskManagementService implements OnDestroy {
     },
   ];
 
-  private sortTitle: boolean = true;
-
   storageListenSub: Subscription;
 
   constructor() {
@@ -93,7 +91,7 @@ export class TaskManagementService implements OnDestroy {
       window,
       'storage'
     ).subscribe((event) => {
-      if (event.key === 'notes') {
+      if (event.key === 'tasks') {
         this.loadState();
       }
     });
@@ -139,34 +137,6 @@ export class TaskManagementService implements OnDestroy {
     this.saveState();
   }
 
-  sortTasksByTitle() {
-    this.tasks.sort((a, b) => {
-      const comparison = a.title.localeCompare(b.title);
-      return this.sortTitle ? comparison : -comparison;
-    });
-    this.sortTitle = !this.sortTitle;
-  }
-
-  sortTasksByExecutor() {
-    this.tasks.sort((a, b) => a.executor.localeCompare(b.executor));
-  }
-
-  sortTasksByDeadline() {
-    this.tasks.sort((a, b) => {
-      const dateA = new Date(a.deadline.start);
-      const dateB = new Date(b.deadline.start);
-      return dateA.getTime() - dateB.getTime();
-    });
-  }
-
-  sortTasksByPriority() {
-    this.tasks.sort((a, b) => a.priority.text.localeCompare(b.priority.text));
-  }
-
-  sortTasksByStatus() {
-    this.tasks.sort((a, b) => a.status.text.localeCompare(b.status.text));
-  }
-
   saveState() {
     localStorage.setItem('tasks', JSON.stringify(this.tasks));
   }
@@ -174,8 +144,12 @@ export class TaskManagementService implements OnDestroy {
   loadState() {
     try {
       const tasksInStorage = localStorage.getItem('tasks');
+      console.log(tasksInStorage);
+
       if (tasksInStorage) {
         const parsedTasks: Task[] = JSON.parse(tasksInStorage);
+        console.log(parsedTasks);
+
         this.tasks.length = 0;
         this.tasks.push(...parsedTasks);
       }

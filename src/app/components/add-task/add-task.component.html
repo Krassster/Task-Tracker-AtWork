@@ -30,15 +30,15 @@
           <p>Начало</p>
           <input
             type="date"
-            id="task-deadline"
-            name="task-deadline"
+            id="task-deadline-start"
+            name="task-deadline-start"
             [(ngModel)]="task.deadline.start"
           />
           <p>Конец</p>
           <input
             type="date"
-            id="task-deadline"
-            name="task-deadline"
+            id="task-deadline-end"
+            name="task-deadline-end"
             [(ngModel)]="task.deadline.end"
           />
         </div>
@@ -78,27 +78,12 @@
         <div class="priority">
           <button
             type="button"
-            class="low"
-            [class.active]="activePriority === 'low'"
-            (click)="setPriority('Низкий', 'low')"
+            *ngFor="let priority of priorities"
+            [class]="priorityDetails[priority].style"
+            [ngClass]="{ active: activePriority === priority }"
+            (click)="setPriority(priority)"
           >
-            Низкий
-          </button>
-          <button
-            type="button"
-            class="medium"
-            [class.active]="activePriority === 'medium'"
-            (click)="setPriority('Средний', 'medium')"
-          >
-            Средний
-          </button>
-          <button
-            type="button"
-            class="high"
-            [class.active]="activePriority === 'high'"
-            (click)="setPriority('Высокий', 'high')"
-          >
-            Высокий
+            {{ priorityDetails[priority].text }}
           </button>
         </div>
         <input type="hidden" id="task-priority" name="task-priority" />
@@ -108,37 +93,22 @@
         <div class="status">
           <button
             type="button"
-            class="atWork"
-            [class.active]="activeStatus === 'atWork'"
-            (click)="setStatus('В работе', 'atWork')"
+            *ngFor="let status of statuses"
+            [class]="statusDetails[status].style"
+            [ngClass]="{ active: activeStatus === status }"
+            (click)="setStatus(status)"
           >
-            В работе
-          </button>
-          <button
-            type="button"
-            class="suspended"
-            [class.active]="activeStatus === 'suspended'"
-            (click)="setStatus('Приостановлен', 'suspended')"
-          >
-            Приостановлен
-          </button>
-          <button
-            type="button"
-            class="notStarted"
-            [class.active]="activeStatus === 'notStarted'"
-            (click)="setStatus('Не начат', 'notStarted')"
-          >
-            Не начат
+            {{ statusDetails[status].text }}
           </button>
         </div>
-        <input type="hidden" id="task-priority" name="task-priority" />
+        <input type="hidden" id="task-status" name="task-stasus" />
       </div>
     </div>
     <div class="panel-btn">
-      <a href="/">
-        <button type="button" class="btn-back">Отмена</button>
-      </a>
-      <button type="submit" class="btn-create">Создать задачу</button>
+      <button type="button" class="btn-link back" (click)="goBack()">
+        Отмена
+      </button>
+      <button type="submit" class="btn-link create">Создать задачу</button>
     </div>
   </form>
 </div>

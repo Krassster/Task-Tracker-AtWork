@@ -1,5 +1,12 @@
+import { updateTask } from 'src/app/store/task.actions';
+import { Store } from '@ngrx/store';
 import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import {
+  PriorityDetails,
+  TaskPriority,
+} from 'src/app/enums/task-priority.enum';
+import { StatusDetails, TaskStatus } from 'src/app/enums/task-status.enum';
 import { Task, TaskManagementService } from 'src/app/service/task.service';
 
 @Component({
@@ -12,8 +19,13 @@ export class EditTaskComponent {
 
   task!: Task;
 
-  activePriority: string | null = null;
-  activeStatus: string | null = null;
+  activePriority: TaskPriority | null = null;
+  priorityDetails = PriorityDetails;
+  priorities = Object.values(TaskPriority);
+
+  activeStatus: TaskStatus | null = null;
+  statusDetails = StatusDetails;
+  statuses = Object.values(TaskStatus);
 
   projects: string[] = [];
   isNewProject: boolean = false;
@@ -21,7 +33,8 @@ export class EditTaskComponent {
   constructor(
     private taskService: TaskManagementService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private store: Store
   ) {
     this.showValidationErrors = false;
   }
@@ -35,8 +48,8 @@ export class EditTaskComponent {
         const fetchedTask = this.taskService.getTask(idParam);
         if (fetchedTask !== undefined) {
           this.task = fetchedTask;
-          this.activeStatus = fetchedTask.status.class;
-          this.activePriority = fetchedTask.priority.class;
+          this.activePriority = fetchedTask.priority.class as TaskPriority;
+          this.activeStatus = fetchedTask.status.class as TaskStatus;
         } else {
         }
       }
@@ -47,7 +60,10 @@ export class EditTaskComponent {
     event.preventDefault();
 
     if (true) {
-      this.taskService.updateTask(this.task.id, this.task);
+      this.store.dispatch(
+        updateTask({ id: this.task.id, updatedFields: this.task })
+      );
+      // this.taskService.updateTask(this.task.id, this.task);
       this.router.navigateByUrl('');
     }
   }
@@ -56,19 +72,23 @@ export class EditTaskComponent {
     this.isNewProject = !this.isNewProject;
   }
 
-  setPriority(text: string, style: string) {
-    this.task.priority.text = text;
-    this.task.priority.class = style;
-    this.activePriority = style;
+  setPriority(priority: TaskPriority) {
+    this.activePriority = priority;
+    this.task.priority.class = priority;
+    this.task.priority.text = PriorityDetails[priority].text;
   }
 
-  setStatus(text: string, style: string) {
-    this.task.status.text = text;
-    this.task.status.class = style;
-    this.activeStatus = style;
+  setStatus(status: TaskStatus) {
+    this.activeStatus = status;
+    this.task.status.class = status;
+    this.task.status.text = StatusDetails[status].text;
   }
 
   deleteTask() {
     this.taskService.deleteTask(this.task.id);
+    this.goBack();
+  }
+  goBack() {
+    this.router.navigateByUrl('');
   }
 }

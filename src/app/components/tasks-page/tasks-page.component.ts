@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { TaskFilterService } from 'src/app/service/task-filter.service';
 import { Task, TaskManagementService } from 'src/app/service/task.service';
 
@@ -13,7 +14,8 @@ export class TasksPageComponent implements OnInit {
   tasks: Task[] = [];
   constructor(
     private taskService: TaskManagementService,
-    private taskFilterService: TaskFilterService
+    private taskFilterService: TaskFilterService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.tasks = this.taskService.getTasks();
@@ -46,5 +48,9 @@ export class TasksPageComponent implements OnInit {
         this.taskFilterService.sortTasksByStatus();
         break;
     }
+  }
+
+  goToAddPage() {
+    this.router.navigateByUrl('add');
   }
 }

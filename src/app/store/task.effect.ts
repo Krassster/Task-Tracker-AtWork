@@ -1,17 +1,20 @@
-import { TaskManagementService } from './../service/task.service';
 import { Injectable } from '@angular/core';
+
+import { of } from 'rxjs';
+import { exhaustMap, map, tap, withLatestFrom } from 'rxjs/operators';
+
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import * as TaskActions from './task.actions';
-import { of } from 'rxjs/internal/observable/of';
 import { select, Store } from '@ngrx/store';
+
+import * as TaskActions from './task.actions';
+import { Task, DataService } from '../service/data.service';
+import { selectAllTasks } from './task.reducer';
 
 @Injectable()
 export class TaskEffects {
   addTask$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TaskActions.addTask),
-      tap((action) => this.taskManagementService.addTask(action.task)),
       map(() => TaskActions.loadTasks())
     )
   );
@@ -19,9 +22,6 @@ export class TaskEffects {
   updateTask$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TaskActions.updateTask),
-      tap((action) =>
-        this.taskManagementService.updateTask(action.id, action.updatedFields)
-      ),
       map(() => TaskActions.loadTasks())
     )
   );
@@ -29,7 +29,6 @@ export class TaskEffects {
   deleteTask$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TaskActions.deleteTask),
-      tap((action) => this.taskManagementService.deleteTask(action.id)),
       map(() => TaskActions.loadTasks())
     )
   );
@@ -37,12 +36,10 @@ export class TaskEffects {
   loadTasks$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TaskActions.loadTasks),
-      tap(() => this.taskManagementService.loadState()),
-      map(() =>
-        TaskActions.loadTasksSuccess({
-          tasks: this.taskManagementService.getTasks(),
-        })
-      )
+      exhaustMap(() => {
+        const tasks = this.dataService.loadState();
+        return of(TaskActions.loadTasksSuccess({ tasks }));
+      })
     )
   );
 
@@ -54,17 +51,30 @@ export class TaskEffects {
           TaskActions.updateTask,
           TaskActions.deleteTask
         ),
-        withLatestFrom(this.store.pipe(select((state) => state.tasks))),
+        withLatestFrom(this.store.pipe(select(selectAllTasks))),
         tap(([action, tasks]) => {
-          localStorage.setItem('tasks', JSON.stringify(tasks));
+          this.dataService.saveTasks(tasks);
         })
       ),
     { dispatch: false }
   );
 
+  initTasks$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TaskActions.initTasks),
+      map(() => {
+        const tasks = this.dataService.loadState();
+        if (tasks.length === 0) {
+          this.dataService.saveTasks(this.dataService.getTasks());
+        }
+        return TaskActions.loadTasksSuccess({ tasks });
+      })
+    )
+  );
+
   constructor(
     private actions$: Actions,
-    private taskManagementService: TaskManagementService,
-    private store: Store<{ tasks: TaskManagementService }>
+    private store: Store<{ tasks: Task[] }>,
+    private dataService: DataService
   ) {}
 }

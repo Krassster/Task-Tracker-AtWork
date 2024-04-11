@@ -8,21 +8,49 @@
         <label for="task-name">Название</label>
         <input
           type="text"
+          #titleField="ngModel"
           id="task-name"
           name="task-name"
-          placeholder="{{ task.title }}"
-          [(ngModel)]="task.title"
+          [ngModel]="task.title"
+          (ngModelChange)="onTitleChange($event)"
+          placeholder="Введите название задачи"
+          required
+          minlength="3"
         />
+        <ng-container *ngIf="validForm.title && titleField.invalid">
+          <p
+            class="notValid"
+            *ngIf="titleField.errors?.hasOwnProperty('required')"
+          >
+            Пожалуйста, введите название задачи
+          </p>
+          <p
+            class="notValid"
+            *ngIf="titleField.errors?.hasOwnProperty('minlength')"
+          >
+            Название должно состоять минимум из 3х букв
+          </p>
+        </ng-container>
       </div>
       <div class="form-group">
         <label for="task-executor">Исполнитель</label>
         <input
           type="text"
+          #executorField="ngModel"
           id="task-executor"
           name="task-executor"
+          [ngModel]="task.executor"
+          (ngModelChange)="onExecutorChange($event)"
           placeholder="Введите имя исполнителя"
-          [(ngModel)]="task.executor"
         />
+        <ng-container *ngIf="validForm.executor && executorField.invalid">
+          <p
+            class="notValid"
+            *ngIf="executorField.errors?.hasOwnProperty('required')"
+          >
+            Необходимо назначить исполнителя
+          </p>
+        </ng-container>
       </div>
       <div class="form-group">
         <label for="task-deadline">Сроки</label>
@@ -30,21 +58,42 @@
           <p>Начало</p>
           <input
             type="date"
+            #dateStartField="ngModel"
             id="task-deadline-start"
             name="task-deadline-start"
-            [value]="task.deadline.start"
-            [(ngModel)]="task.deadline.start"
+            [ngModel]="task.deadline.start"
+            (ngModelChange)="onDeadlineStartChange($event)"
           />
           <p>Конец</p>
           <input
             type="date"
+            #dateEndField="ngModel"
             id="task-deadline-end"
             name="task-deadline-end"
-            [value]="task.deadline.end"
-            [(ngModel)]="task.deadline.end"
+            [ngModel]="task.deadline.end"
+            (ngModelChange)="onDeadlineEndChange($event)"
           />
         </div>
+        <div class="error-box">
+          <ng-container *ngIf="validForm.startDate && dateStartField.invalid">
+            <p
+              class="notValid"
+              *ngIf="dateStartField.errors?.hasOwnProperty('required')"
+            >
+              Укажите начало работы
+            </p>
+          </ng-container>
+          <ng-container *ngIf="validForm.endDate && dateEndField.invalid">
+            <p
+              class="notValid"
+              *ngIf="dateEndField.errors?.hasOwnProperty('required')"
+            >
+              Укажите дедлайн
+            </p>
+          </ng-container>
+        </div>
       </div>
+
       <div class="form-group">
         <ng-container *ngIf="!isNewProject">
           <div class="task-project-name">
@@ -54,7 +103,8 @@
           <select
             id="task-project"
             name="task-project"
-            [(ngModel)]="task.project"
+            [ngModel]="task.project"
+            (ngModelChange)="onProjectChange($event)"
           >
             <option value="" selected disabled hidden>Выберите проект</option>
             <option *ngFor="let project of projects" [value]="project">
@@ -71,7 +121,8 @@
             type="text"
             id="task-project"
             name="task-project"
-            [(ngModel)]="task.project"
+            [ngModel]="task.project"
+            (ngModelChange)="onProjectChange($event)"
           />
         </ng-container>
       </div>

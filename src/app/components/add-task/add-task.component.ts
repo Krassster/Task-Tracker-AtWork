@@ -1,14 +1,17 @@
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { v4 as uuidv4 } from 'uuid';
+import { Store } from '@ngrx/store';
+
+import { Task, DataService } from 'src/app/service/data.service';
 import { StatusDetails, TaskStatus } from './../../enums/task-status.enum';
+import { addTask } from 'src/app/store/task.actions';
 import {
   PriorityDetails,
   TaskPriority,
-} from './../../enums/task-priority.enum';
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Task, TaskManagementService } from 'src/app/service/task.service';
-import { v4 as uuidv4 } from 'uuid';
-import { Store } from '@ngrx/store';
-import { addTask } from 'src/app/store/task.actions';
+} from 'src/app/enums/task-priority.enum';
 
 @Component({
   selector: 'app-add-task',
@@ -16,7 +19,12 @@ import { addTask } from 'src/app/store/task.actions';
   styleUrls: ['./add-task.component.scss'],
 })
 export class AddTaskComponent implements OnInit {
-  showValidationErrors: boolean;
+  validForm: {
+    title: boolean;
+    executor: boolean;
+    startDate: boolean;
+    endDate: boolean;
+  };
 
   task: Task = {
     id: '',
@@ -29,31 +37,34 @@ export class AddTaskComponent implements OnInit {
   };
 
   activePriority: TaskPriority | null = null;
-  priorityDetails = PriorityDetails;
+  priorityDetails: typeof PriorityDetails = PriorityDetails;
   priorities = Object.values(TaskPriority);
 
   activeStatus: TaskStatus | null = null;
-  statusDetails = StatusDetails;
+  statusDetails: typeof StatusDetails = StatusDetails;
   statuses = Object.values(TaskStatus);
 
   projects: string[] = [];
   isNewProject: boolean = false;
 
   constructor(
-    private taskService: TaskManagementService,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private dataService: DataService
   ) {
-    this.showValidationErrors = false;
+    this.validForm = {
+      title: false,
+      executor: false,
+      startDate: false,
+      endDate: false,
+    };
   }
   ngOnInit(): void {
-    this.projects = this.taskService.getUniqueProjects();
+    this.projects = this.dataService.getUniqueProjects();
   }
 
-  onSubmit(event: Event): void {
-    event.preventDefault();
-
-    if (true) {
+  onSubmit(form: NgForm): void {
+    if (form.valid) {
       const newTask: Task = {
         id: uuidv4(),
         title: this.task.title,
@@ -73,6 +84,13 @@ export class AddTaskComponent implements OnInit {
       this.store.dispatch(addTask({ task: newTask }));
 
       this.router.navigateByUrl('');
+    } else {
+      this.validForm = {
+        title: true,
+        executor: true,
+        startDate: true,
+        endDate: true,
+      };
     }
   }
 
@@ -80,15 +98,23 @@ export class AddTaskComponent implements OnInit {
     this.isNewProject = !this.isNewProject;
   }
 
-  setPriority(priority: TaskPriority) {
+  setPriority(priority: TaskPriority): void {
     this.activePriority = priority;
+    this.task.priority = {
+      text: this.priorityDetails[priority].text,
+      class: this.priorityDetails[priority].style,
+    };
   }
 
-  setStatus(status: TaskStatus) {
+  setStatus(status: TaskStatus): void {
     this.activeStatus = status;
+    this.task.status = {
+      text: this.statusDetails[status].text,
+      class: this.statusDetails[status].style,
+    };
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigateByUrl('');
   }
 }

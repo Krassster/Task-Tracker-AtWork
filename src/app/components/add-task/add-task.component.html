@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <form class="panel" (submit)="onSubmit($event)">
+  <form #form="ngForm" class="panel" (submit)="onSubmit(form)">
     <div class="panel-title">
       <h1>Добавить новую задачу</h1>
     </div>
@@ -8,21 +8,48 @@
         <label for="task-name">Название</label>
         <input
           type="text"
+          #titleField="ngModel"
           id="task-name"
           name="task-name"
           placeholder="Введите название задачи"
           [(ngModel)]="task.title"
+          required
+          minlength="3"
         />
+        <ng-container *ngIf="validForm.title && titleField.invalid">
+          <p
+            class="notValid"
+            *ngIf="titleField.errors?.hasOwnProperty('required')"
+          >
+            Пожалуйста, введите название задачи
+          </p>
+          <p
+            class="notValid"
+            *ngIf="titleField.errors?.hasOwnProperty('minlength')"
+          >
+            Название должно состоять минимум из 3х букв
+          </p>
+        </ng-container>
       </div>
       <div class="form-group">
         <label for="task-executor">Исполнитель</label>
         <input
           type="text"
+          #executorField="ngModel"
           id="task-executor"
           name="task-executor"
           placeholder="Введите имя исполнителя"
           [(ngModel)]="task.executor"
+          required
         />
+        <ng-container *ngIf="validForm.executor && executorField.invalid">
+          <p
+            class="notValid"
+            *ngIf="executorField.errors?.hasOwnProperty('required')"
+          >
+            Необходимо назначить исполнителя
+          </p>
+        </ng-container>
       </div>
       <div class="form-group">
         <label for="task-deadline">Сроки</label>
@@ -30,17 +57,39 @@
           <p>Начало</p>
           <input
             type="date"
+            #dateStartField="ngModel"
             id="task-deadline-start"
             name="task-deadline-start"
             [(ngModel)]="task.deadline.start"
+            required
           />
           <p>Конец</p>
           <input
             type="date"
+            #dateEndField="ngModel"
             id="task-deadline-end"
             name="task-deadline-end"
             [(ngModel)]="task.deadline.end"
+            required
           />
+        </div>
+        <div class="error-box">
+          <ng-container *ngIf="validForm.startDate && dateStartField.invalid">
+            <p
+              class="notValid"
+              *ngIf="dateStartField.errors?.hasOwnProperty('required')"
+            >
+              Укажите начало работы
+            </p>
+          </ng-container>
+          <ng-container *ngIf="validForm.endDate && dateEndField.invalid">
+            <p
+              class="notValid"
+              *ngIf="dateEndField.errors?.hasOwnProperty('required')"
+            >
+              Укажите дедлайн
+            </p>
+          </ng-container>
         </div>
       </div>
       <div class="form-group">

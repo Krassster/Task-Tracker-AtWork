@@ -24,8 +24,6 @@
       @include styles.centring;
       gap: 80px;
 
-      cursor: pointer;
-
       .filter {
         width: 140px;
         height: 30px;
@@ -37,6 +35,7 @@
         border-radius: 0px 0px 6px 6px;
 
         transition: transform 0.3s ease;
+        cursor: pointer;
       }
 
       .filter:hover {

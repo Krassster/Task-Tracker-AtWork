@@ -61,6 +61,8 @@ export class AddTaskComponent implements OnInit {
   }
   ngOnInit(): void {
     this.projects = this.dataService.getUniqueProjects();
+    this.isNewProject = this.projects.length === 0;
+    this.task.deadline.start = new Date().toISOString().split('T')[0];
   }
 
   onSubmit(form: NgForm): void {
@@ -69,7 +71,10 @@ export class AddTaskComponent implements OnInit {
         id: uuidv4(),
         title: this.task.title,
         executor: this.task.executor,
-        deadline: this.task.deadline,
+        deadline: {
+          start: this.task.deadline.start,
+          end: this.task.deadline.end,
+        },
         priority: {
           text: this.task.priority.text,
           class: this.task.priority.class,

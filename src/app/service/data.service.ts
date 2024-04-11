@@ -30,8 +30,8 @@ export class DataService {
       title: 'Отрисовать проект',
       executor: 'Алекс К.',
       deadline: {
-        start: '2024-04-04',
-        end: '2024-04-05',
+        start: '2024-04-05',
+        end: '2024-04-06',
       },
       priority: {
         text: 'Низкий',
@@ -48,8 +48,8 @@ export class DataService {
       title: 'Собрать визуал',
       executor: 'Алекс К.',
       deadline: {
-        start: '2024-04-05',
-        end: '2024-04-06',
+        start: '2024-04-08',
+        end: '2024-04-09',
       },
       priority: {
         text: 'Средний',
@@ -66,8 +66,8 @@ export class DataService {
       title: 'Сдать выполненое тз',
       executor: 'Алекс К.',
       deadline: {
-        start: '2024-04-08',
-        end: '2024-04-09',
+        start: '2024-04-10',
+        end: '2024-04-11',
       },
       priority: {
         text: 'Высокий',
@@ -87,10 +87,12 @@ export class DataService {
     const tasksInStorage = localStorage.getItem(this.localStorageKey);
 
     if (tasksInStorage) {
-      return JSON.parse(tasksInStorage);
+      const parsedTasks = JSON.parse(tasksInStorage);
+      return parsedTasks;
+    } else {
+      localStorage.setItem(this.localStorageKey, JSON.stringify(this.tasks));
+      return this.tasks;
     }
-
-    return this.tasks;
   }
 
   saveTasks(tasks: Task[]): void {

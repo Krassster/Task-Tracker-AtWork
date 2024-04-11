@@ -8,6 +8,7 @@ import { select, Store } from '@ngrx/store';
 import { TaskFilterService } from 'src/app/service/task-filter.service';
 import { DataService, Task } from 'src/app/service/data.service';
 import { selectAllTasks } from 'src/app/store/task.reducer';
+import { initTasks } from 'src/app/store/task.actions';
 
 @Component({
   selector: 'app-tasks-page',
@@ -24,7 +25,9 @@ export class TasksPageComponent implements OnInit {
     private store: Store<{ tasks: Task[] }>,
     private dataService: DataService,
     private taskFilterService: TaskFilterService
-  ) {}
+  ) {
+    this.store.dispatch(initTasks());
+  }
 
   ngOnInit(): void {
     this.tasks = this.dataService.loadState();

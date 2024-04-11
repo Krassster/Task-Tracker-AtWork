@@ -98,7 +98,6 @@ export class EditTaskComponent {
       },
     };
     this.activePriority = priority;
-    console.log(priority);
   }
 
   setStatus(status: TaskStatus) {

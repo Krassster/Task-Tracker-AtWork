@@ -49,7 +49,8 @@ export class TaskEffects {
         ofType(
           TaskActions.addTask,
           TaskActions.updateTask,
-          TaskActions.deleteTask
+          TaskActions.deleteTask,
+          TaskActions.loadTasksSuccess
         ),
         withLatestFrom(this.store.pipe(select(selectAllTasks))),
         tap(([action, tasks]) => {
@@ -62,12 +63,14 @@ export class TaskEffects {
   initTasks$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TaskActions.initTasks),
-      map(() => {
-        const tasks = this.dataService.loadState();
-        if (tasks.length === 0) {
-          this.dataService.saveTasks(this.dataService.getTasks());
+      exhaustMap(() => {
+        let tasks = this.dataService.loadState();
+        if (!localStorage.getItem('tasks')) {
+          this.dataService.saveTasks(tasks);
+        } else {
+          tasks = this.dataService.getTasks();
         }
-        return TaskActions.loadTasksSuccess({ tasks });
+        return of(TaskActions.loadTasksSuccess({ tasks }));
       })
     )
   );
